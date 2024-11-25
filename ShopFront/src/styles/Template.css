@@ -1,0 +1,29 @@
+/* Estilo do contêiner principal */
+.template-container {
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* Largura total da viewport */
+  height: 100vh; /* Altura total da viewport */
+  background-image: url('../../public/assets/backgroundStore.webp'); /* Caminho absoluto para a imagem */
+  background-size: cover; /* Faz a imagem preencher o fundo */
+  background-position: center; /* Centraliza a imagem */
+  background-repeat: no-repeat; /* Sem repetição */
+  display: flex;
+  flex-direction: column; /* Header no topo, conteúdo abaixo */
+  overflow: hidden; /* Remove rolagem */
+}
+
+/* Estilo do header */
+.template-container > header {
+  flex-shrink: 0; /* Header permanece fixo */
+}
+
+/* Conteúdo abaixo do header */
+.template-content {
+  flex: 1; /* O conteúdo ocupa o restante do espaço */
+  display: flex; /* Se precisar de alinhamento interno */
+  align-items: center; /* Centraliza verticalmente o conteúdo */
+  justify-content: center; /* Centraliza horizontalmente o conteúdo */
+  overflow: hidden; /* Remove qualquer rolagem interna */
+  position: relative; /* Fixo em relação ao template */
+}

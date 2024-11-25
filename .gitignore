@@ -1,0 +1,29 @@
+# Build results
+bin/
+obj/
+out/
+
+# SQLite database
+*.db
+*.db-journal
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Log and debug files
+*.log
+
+# Dependencies
+packages/
+node_modules/
+
+# Environment files
+.env
+.env.*
