@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = "ShopApiIssuer", // Substituir pelo emissor válido
         ValidAudience = "ShopApiAudience", // Substituir pela audiência válida
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("sua_chave_privada_aqui") // Substituir pela chave privada
+            Encoding.UTF8.GetBytes("superchavesecretamegablastermatadoradenoobsplustripleheadshotcarpadoinvertido") // Substituir pela chave privada
         )
     };
 });
