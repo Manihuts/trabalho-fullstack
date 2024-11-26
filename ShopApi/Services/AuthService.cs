@@ -47,46 +47,52 @@ public class AuthService
 
         if (usuario == null)
         {
-            return null; // Usuário não encontrado
+            return null; 
         }
 
         var result = _passwordHasher.VerifyHashedPassword(usuario, usuario.HashSenha, loginDto.Senha);
         if (result == PasswordVerificationResult.Failed)
         {
-            return null; // Senha incorreta
+            return null;
         }
 
-        return GenerateJwtToken(usuario); // Gerar o token JWT
+        return GenerateJwtToken(usuario); 
     }
 
-    // Método para gerar o token JWT
+
     private string GenerateJwtToken(Usuario usuario)
+{
+#pragma warning disable CS8604 // Possible null reference argument.
+    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+#pragma warning restore CS8604 // Possible null reference argument.
+    var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+    var claims = new List<Claim>
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
+        new Claim(ClaimTypes.Name, usuario.Email),
+        new Claim(ClaimTypes.Role, usuario.Admin ? "Admin" : "User")
+    };
 
-        var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Name, usuario.Email),
-            new Claim(ClaimTypes.Role, usuario.Admin ? "Admin" : "User")
-        };
+    var usuarioDTO = new UsuarioDTO(usuario);
+    claims.AddRange(new[]
+    {
+        new Claim("UsuarioDTO", System.Text.Json.JsonSerializer.Serialize(usuarioDTO))
+    });
 
-        // Adicionar dados do DTO como Claims
-        var usuarioDTO = new UsuarioDTO(usuario);
-        claims.AddRange(new[]
-        {
-            new Claim("UsuarioDTO", System.Text.Json.JsonSerializer.Serialize(usuarioDTO)) // Serializar DTO como string JSON
-        });
+    var token = new JwtSecurityToken(
+        issuer: _configuration["Jwt:Issuer"],
+        audience: _configuration["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.UtcNow.AddHours(1),
+        signingCredentials: credentials
+    );
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: credentials
-        );
+    var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
+    Console.WriteLine("Token Gerado: " + jwtToken);
+
+    return jwtToken;
+}
+
 }

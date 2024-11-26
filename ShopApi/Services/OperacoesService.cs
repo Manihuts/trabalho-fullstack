@@ -15,9 +15,6 @@ public class OperacoesService
         _db = db;
     }
 
-    /// <summary>
-    /// Realiza a compra de um produto.
-    /// </summary>
     public async Task<string> ComprarProdutoAsync(OperacaoCompraDTO compraDto)
     {
         var usuario = await _db.Usuarios
@@ -62,9 +59,6 @@ public class OperacoesService
         return "Compra realizada com sucesso.";
     }
 
-    /// <summary>
-    /// Realiza a venda de um produto.
-    /// </summary>
     public async Task<string> VenderProdutoAsync(OperacaoVendaDTO vendaDto)
     {
         var usuario = await _db.Usuarios

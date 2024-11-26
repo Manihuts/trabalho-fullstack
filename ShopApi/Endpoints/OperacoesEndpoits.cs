@@ -2,6 +2,7 @@ using ShopApi.DTOs;
 using ShopApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ShopApi.Endpoints;
 
@@ -37,11 +38,31 @@ public static class OperacoesEndpoints
         var resultado = await service.VenderProdutoAsync(vendaDto);
         return TypedResults.Ok(new { Mensagem = resultado });
     }
-
-    private static bool UsuarioValido(HttpContext httpContext, long usuarioId)
+private static bool UsuarioValido(HttpContext httpContext, long usuarioId)
+{
+    foreach (var claim in httpContext.User.Claims)
     {
-        var userIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        return userIdClaim != null && long.TryParse(userIdClaim, out var userIdFromToken) && userIdFromToken == usuarioId;
+        Console.WriteLine($"Claim: {claim.Type}, Value: {claim.Value}");
     }
+    var userIdClaim = httpContext.User.Claims
+                                     .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+    Console.WriteLine("UserIdClaim encontrado: " + userIdClaim);
+    if (userIdClaim == null)
+    {
+        Console.WriteLine("Claim 'nameidentifier' não encontrada!");
+        return false;
+    }
+    string userIdClaimString = userIdClaim.ToString();
+    string usuarioIdString = usuarioId.ToString();
+    Console.WriteLine($"ID da claim: {userIdClaimString}");
+    Console.WriteLine($"ID do usuário: {usuarioIdString}");
+    if (userIdClaimString == usuarioIdString)
+    {
+        return true;
+    }
+    Console.WriteLine("ID da claim não corresponde ao ID do usuário.");
+    return false;
+}
+
 }

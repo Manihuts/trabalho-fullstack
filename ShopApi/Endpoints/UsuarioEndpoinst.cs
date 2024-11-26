@@ -12,11 +12,10 @@ public static class UsuarioEndpoints
     {
         var group = app.MapGroup("/usuarios");
 
-        // Endpoints públicos
         group.MapPost("/registrar", RegistrarUsuarioAsync).AllowAnonymous();
         group.MapPost("/login", LoginUsuarioAsync).AllowAnonymous();
 
-        // Endpoints protegidos por token
+   
         group.MapGet("/", GetAsync).RequireAuthorization("Admin");
         group.MapGet("/{id}", GetByIdAsync).RequireAuthorization();
         group.MapPost("/", PostUsuarioAsync).RequireAuthorization("Admin");

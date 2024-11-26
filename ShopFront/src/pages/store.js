@@ -38,7 +38,7 @@ const Store = () => {
       >
         Loja de Produtos
       </h2>
-      <Row className="g-4">
+      <Row className="g-6">
         {user?.admin && (
           <Col xs={12} sm={6} md={4} lg={3}>
             <Card
@@ -62,7 +62,7 @@ const Store = () => {
           </Col>
         )}
         {products.map((product) => (
-          <Col xs={12} sm={6} md={4} lg={3} key={product.Id}>
+          <Col xs={12} sm={6} md={4} lg={2} key={product.Id}>
             <ProductCard
               product={product}
               isAdmin={user?.admin}

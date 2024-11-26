@@ -5,6 +5,7 @@ using ShopApi.Models;
 using ShopApi.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,7 @@ builder.Services.AddScoped<CarrinhoOperacoesService>();
 // Hash do password
 builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 
-// Configuração de autenticação com JWT
+
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddAuthentication(options =>
 {
@@ -30,27 +31,59 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer("Bearer", options =>
 {
-    options.RequireHttpsMetadata = false; // Configurar como true em produção
     options.SaveToken = true;
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            var exception = context.Exception;
+            if (exception != null)
+            {
+               
+                Console.WriteLine("Erro na autenticação JWT: " + exception.Message);
+            
+            
+            }
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+
+            Console.WriteLine("####Token validado com sucesso.####");
+            
+
+            var claimsIdentity = context.Principal?.Identity;
+            if (claimsIdentity != null)
+            {
+                var userName = claimsIdentity.Name;  
+                Console.WriteLine($"Usuário autenticado: {userName}");
+            }
+            return Task.CompletedTask;
+        }
+    };
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "ShopApiIssuer", // Substituir pelo emissor válido
-        ValidAudience = "ShopApiAudience", // Substituir pela audiência válida
+        ValidIssuer = "ShopApiIssuer",  
+        ValidAudience = "ShopApiAudience", 
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("superchavesecretamegablastermatadoradenoobsplustripleheadshotcarpadoinvertido") // Substituir pela chave privada
+            Encoding.UTF8.GetBytes("superchavesecretamegablastermatadoradenoobsplustripleheadshotcarpadoinvertido") 
         )
     };
 });
+
+
 
 builder.Services.AddCors();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -59,18 +92,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Ativação de CORS
+
 app.UseCors(builder => builder
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowAnyOrigin()
 );
 
-// Ativação de autenticação e autorização
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Adição dos endpoints
+
 app.AddProdutoEndpoints();
 app.AddUsuarioEndpoints();
 app.AddCarrinhoEndpoints();
