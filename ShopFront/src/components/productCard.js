@@ -1,51 +1,32 @@
 import React from "react";
-import { Col, Card, Button } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 
-const ProductCard = ({
-  product,
-  handleDelete,
-  handleIncreaseQuantity,
-  isCartContext,
-  isAdmin,
-  handleEdit,
-}) => {
+const ProductCard = ({ product, isAdmin, handleEdit }) => {
   return (
-    <Col
-      xs={10}
-      sm={6}
-      md={4}
-      lg={3}
-      xl={3}
-      className="mb-4 d-flex justify-content-center"
-    >
-      <Card style={{ width: "18rem" }}>
-        <Card.Img variant="top" src={product.productImage} />
-        <Card.Body>
-          <Card.Title>{product.Nome}</Card.Title>
-          <Card.Title>R$ {product.Preco.toFixed(2)}</Card.Title>
-          <Card.Text>{product.Descricao}</Card.Text>
-          <Card.Text>Quantidade: {product.Quantidade}</Card.Text>
-          {isCartContext ? (
-            <div className="d-flex justify-content-between">
-              <Button
-                variant="danger"
-                onClick={handleDelete}
-                style={{ marginRight: "0.5rem" }}
-              >
-                Remover
-              </Button>
-              <Button variant="primary" onClick={handleIncreaseQuantity}>
-                +1
-              </Button>
-            </div>
-          ) : isAdmin ? (
-            <Button variant="warning" onClick={handleEdit}>
-              Editar Produto
-            </Button>
-          ) : null}
-        </Card.Body>
-      </Card>
-    </Col>
+    <Card className="mb-4">
+      <Card.Img
+        variant="top"
+        src={product.Image || "https://via.placeholder.com/150"}
+        alt={product.Name}
+      />
+      <Card.Body>
+        <Card.Title>{product.Name}</Card.Title>
+        <Card.Text>
+          <strong>Preço:</strong> R$ {product.Price}
+        </Card.Text>
+        <Card.Text>{product.Description}</Card.Text>
+        {/* Botão de edição visível apenas para admins */}
+        {isAdmin && (
+          <Button
+            variant="warning"
+            onClick={handleEdit}
+            className="w-100 mt-2"
+          >
+            Editar Produto
+          </Button>
+        )}
+      </Card.Body>
+    </Card>
   );
 };
 

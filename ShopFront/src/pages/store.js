@@ -1,39 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import ProductCard from "./ProductCard";
-import { fetchProducts } from "../services/appServices"; 
+import ProductCard from "../components/productCard";
+import { produtoService } from "../services/produtoService"; // Service ajustado
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const [products, setProducts] = useState([]);
-  const { user } = useAuth(); 
-
+  const { user } = useAuth(); // Pega informações do usuário autenticado
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const getProducts = async () => {
+    const fetchProducts = async () => {
       try {
-        const response = await fetchProducts(); 
-        setProducts(response.data);
+        const service = produtoService();
+        const productsData = await service.getAll();
+        setProducts(productsData); // Atualiza o estado com os produtos
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
       }
     };
-    getProducts();
+    fetchProducts();
   }, []);
 
-
   const handleCreateProduct = () => {
-    console.log("Navegar para a página de criação de produto");
+    navigate("/edit-product"); // Redireciona para a rota de criação/edição de produto
+  };
 
+  const handleEditProduct = (productId) => {
+    navigate(`/edit-product/${productId}`); // Redireciona para a rota de edição com o ID do produto
   };
 
   return (
     <Container>
       <h2 className="my-4">Loja</h2>
       <Row>
-   
-        {user.admin && (
-          <Col xs={10} sm={6} md={4} lg={3} xl={3} className="mb-4">
+        {/* Card adicional para criar produto, visível apenas para admins */}
+        {user?.admin && (
+          <Col xs={12} sm={6} md={4} lg={3} className="mb-4">
             <Card
               className="h-100 d-flex justify-content-center align-items-center"
               style={{ border: "2px dashed gray" }}
@@ -44,22 +48,20 @@ const Store = () => {
                   onClick={handleCreateProduct}
                   style={{ width: "100%" }}
                 >
-                  Criar Produto
+                  Registrar Produto
                 </Button>
               </Card.Body>
             </Card>
           </Col>
         )}
 
+        {/* Renderiza os produtos */}
         {products.map((product) => (
           <ProductCard
             key={product.Id}
             product={product}
-            isCartContext={false} 
-            isAdmin={user.admin} 
-            handleEdit={() =>
-              console.log("Editar Produto:", product) 
-            }
+            isAdmin={user?.admin} // Passa flag para o card de produto
+            handleEdit={() => handleEditProduct(product.Id)} // Redireciona para edição
           />
         ))}
       </Row>
