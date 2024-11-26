@@ -4,28 +4,30 @@ import { useAuth } from "../context/authContext";
 import { OperacoesService } from "../services/operacoesServices";
 
 const ProductCard = ({ product, isAdmin, handleEdit }) => {
-  const { authToken, user } = useAuth();
-  const token = JSON.parse(authToken);
-  const userData  = JSON.parse(user)
+  const { authToken, user } = useAuth();  // Acessa diretamente o authToken (string) e user (objeto)
+
   const handleCompra = async () => {
     if (!authToken || !user) {
       alert("Você precisa estar logado para comprar!");
       return;
     }
-    console.log(typeof user)
-    console.log(typeof authToken)
-    console.log("User:",user)
-    console.log("user id " , user.Id)
-    console.log("Product",product)
+
+    console.log(typeof user);  // Verifique que agora é 'object'
+    console.log(typeof authToken);  // Isso vai ser 'string'
+    console.log("User:", user);  // O objeto user
+    console.log("user id ", user.Id);
+    console.log("Product", product);
+
     const compraDto = {
-      id: userData.Id,
+      id: user.Id,  // Acessando diretamente o id do objeto user
       produtoId: product.id,
       quantidade: 1,
     };
-    console.log("CompraDTO:",compraDto)
-    console.log(authToken)
+
+    console.log("CompraDTO:", compraDto);
+
     try {
-      await OperacoesService.comprarProduto(compraDto, token);
+      await OperacoesService.comprarProduto(compraDto, authToken);  // Passando authToken diretamente
       alert("Compra realizada com sucesso!");
     } catch (error) {
       alert("Erro ao realizar compra: " + (error.response?.data || error.message));
@@ -39,7 +41,7 @@ const ProductCard = ({ product, isAdmin, handleEdit }) => {
     }
 
     const itemDto = {
-      usuarioId: user.id,
+      usuarioId: user.id,  // Acessando diretamente a propriedade 'id' do objeto user
       produtoId: product.id,
       quantidade: 1,
     };
@@ -68,7 +70,7 @@ const ProductCard = ({ product, isAdmin, handleEdit }) => {
         style={{
           width: "100%",
           height: "auto",
-          padding:10,
+          padding: 10,
           objectFit: "cover",
           borderRadius: "8px 8px 0 0",
         }}

@@ -27,13 +27,13 @@ export const AuthServices = {
       const queryParams = new URLSearchParams({ senha }).toString();
   
       const response = await axios.post(
-        `${server}/usuarios/registrar?${queryParams}`, // Adiciona os parâmetros na query string
-        usuarioDTO // Envia apenas o DTO no corpo
+        `${server}/usuarios/registrar?${queryParams}`, 
+        usuarioDTO 
       );
   
       console.log("Usuário registrado:", response.data);
   
-      // Após registrar, realiza login
+ 
       const loginResponse = await this.login({
         Email: data.email,
         Senha: data.senha,
