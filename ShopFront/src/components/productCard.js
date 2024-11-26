@@ -12,8 +12,8 @@ const ProductCard = ({ product, isAdmin, handleEdit }) => {
       return;
     }
 
-    console.log(typeof user);  // Verifique que agora é 'object'
-    console.log(typeof authToken);  // Isso vai ser 'string'
+    console.log("Tipo do user:", typeof user);  // Verifique que agora é 'object'
+    console.log("Tipo do authToken:",typeof authToken);  // Isso vai ser 'string'
     console.log("User:", user);  // O objeto user
     console.log("user id ", user.Id);
     console.log("Product", product);
