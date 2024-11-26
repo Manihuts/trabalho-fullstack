@@ -23,17 +23,17 @@ public class AuthService
         _configuration = configuration;
     }
 
-    // Método para criar um novo usuário com senha hash
+
     public async Task<UsuarioDTO?> RegisterAsync(UsuarioDTO dto, string password)
     {
         if (await _context.Usuarios.AnyAsync(u => u.Email == dto.Email))
         {
-            return null; // Email já existe
+            return null; 
         }
 
         var usuario = dto.GetModel();
         usuario.HashSenha = _passwordHasher.HashPassword(usuario, password);
-        usuario.Id = IdGenerator.GetId(); // Gerador de ID único, conforme fornecido
+        usuario.Id = IdGenerator.GetId(); 
 
         await _context.Usuarios.AddAsync(usuario);
         await _context.SaveChangesAsync();
@@ -41,7 +41,6 @@ public class AuthService
         return new UsuarioDTO(usuario);
     }
 
-    // Método para realizar login
     public async Task<string?> LoginAsync(LoginDTO loginDto)
     {
         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == loginDto.Email);

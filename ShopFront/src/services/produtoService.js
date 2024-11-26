@@ -1,64 +1,72 @@
-import createAxiosInstance from "./createAxiosInstance";
+import axios from "axios";
+
+const server = "http://localhost:5071";
+
+export const ProdutoService = {
+
+  async getAll() {
+    try {
+      const response = await axios.get(`${server}/produtos`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao obter produtos:", error);
+      throw error;
+    }
+  },
 
 
-export const produtoService = () => {
-  
-  const apiClient = createAxiosInstance();
-  
-  return {
-    // Buscar todos os produtos
-    getAll: async () => {
-      try {
-        const response = await apiClient.get("/produtos");
-        return response.data;
-      } catch (error) {
-        console.error("Erro ao buscar todos os produtos:", error.response?.data || error.message);
-        throw error;
-      }
-    },
+  async getById(id) {
+    try {
+      const response = await axios.get(`${server}/produtos/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao obter produto:", error);
+      throw error;
+    }
+  },
 
-    // Buscar um produto pelo ID
-    getById: async (id) => {
-      try {
-        const response = await apiClient.get(`/produtos/${id}`);
-        return response.data;
-      } catch (error) {
-        console.error(`Erro ao buscar o produto com ID ${id}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
 
-    // Criar um novo produto
-    create: async (product) => {
-      try {
-        const response = await apiClient.post("/produtos", product);
-        return response.data;
-      } catch (error) {
-        console.error("Erro ao criar o produto:", error.response?.data || error.message);
-        throw error;
-      }
-    },
+  async create(data, token) {
+    try {
+      const response = await axios.post(`${server}/produtos`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao criar produto:", error);
+      throw error;
+    }
+  },
 
-    // Atualizar um produto pelo ID
-    update: async (id, product) => {
-      try {
-        const response = await apiClient.put(`/produtos/${id}`, product);
-        return response.data;
-      } catch (error) {
-        console.error(`Erro ao atualizar o produto com ID ${id}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
 
-    // Excluir um produto pelo ID
-    delete: async (id) => {
-      try {
-        const response = await apiClient.delete(`/produtos/${id}`);
-        return response.data;
-      } catch (error) {
-        console.error(`Erro ao excluir o produto com ID ${id}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
-  };
+  async update(id, data, token) {
+    try {
+      const response = await axios.put(`${server}/produtos/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao atualizar produto:", error);
+      throw error;
+    }
+  },
+
+
+  async delete(id, token) {
+    try {
+      const response = await axios.delete(`${server}/produtos/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao deletar produto:", error);
+      throw error;
+    }
+  },
 };

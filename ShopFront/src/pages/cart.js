@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Button } from "react-bootstrap";
-import ProductCard from "./ProductCard";
+import ProductCard from "../components/productCard";
 
 const Cart = ({ cartItems, setCartItems }) => {
   const [totalPrice, setTotalPrice] = useState(0);

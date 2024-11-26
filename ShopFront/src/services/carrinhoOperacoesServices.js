@@ -1,42 +1,50 @@
-import createAxiosInstance from "./createAxiosInstance";
+import axios from "axios";
 
+const server = "http://localhost:5071";
 
-export const carrinhoServices = () => {
-  const apiClient = createAxiosInstance();
+export const CarrinhoService = {
+  // Obter valor total do carrinho
+  async obterValorTotal(usuarioId, token) {
+    try {
+      const response = await axios.get(`${server}/carrinho/operacoes/total/${usuarioId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao obter valor total do carrinho:", error);
+      throw error;
+    }
+  },
 
+  // Alterar item no carrinho
+  async alterarItemCarrinho(usuarioId, itemDto, token) {
+    try {
+      const response = await axios.put(`${server}/carrinho/operacoes/alterar`, itemDto, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao alterar item no carrinho:", error);
+      throw error;
+    }
+  },
 
-  return {
-    // Obter o valor total do carrinho do usuário
-    getTotal: async (usuarioId) => {
-      try {
-        const response = await apiClient.get(`/carrinho/operacoes/total/${usuarioId}`);
-        return response.data; // { Total: valor }
-      } catch (error) {
-        console.error(`Erro ao obter o valor total do carrinho para o usuário ${usuarioId}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
-
-    // Alterar itens do carrinho (adicionar ou diminuir quantidade ou remover)
-    alterarItem: async (usuarioId, item) => {
-      try {
-        const response = await apiClient.put(`/carrinho/operacoes/alterar`, { usuarioId, ...item });
-        return response.data; // Resultado da operação
-      } catch (error) {
-        console.error(`Erro ao alterar item do carrinho para o usuário ${usuarioId}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
-
-    // Finalizar a compra de todos os itens do carrinho
-    finalizarCompra: async (usuarioId) => {
-      try {
-        const response = await apiClient.post(`/carrinho/operacoes/finalizar/${usuarioId}`);
-        return response.data; // Resultado da finalização
-      } catch (error) {
-        console.error(`Erro ao finalizar a compra para o usuário ${usuarioId}:`, error.response?.data || error.message);
-        throw error;
-      }
-    },
-  };
+  // Finalizar compra do carrinho
+  async finalizarCompra(usuarioId, token) {
+    try {
+      const response = await axios.post(`${server}/carrinho/operacoes/finalizar/${usuarioId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao finalizar compra:", error);
+      throw error;
+    }
+  },
 };

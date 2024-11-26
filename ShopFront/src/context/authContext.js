@@ -1,9 +1,7 @@
 import React, { createContext, useState, useContext } from "react";
 
-// Criação do contexto
 export const AuthContext = createContext();
 
-// Provedor do AuthContext
 export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(() => {
     const token = localStorage.getItem("authToken");
@@ -20,27 +18,23 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  // Método para login: salva token e dados do usuário
   const login = (token, userData) => {
     try {
       setAuthToken(token);
       setUser(userData);
 
-      // Salva no localStorage
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("authToken", JSON.parse(token));
+      localStorage.setItem("user", JSON.parse(userData));
     } catch (error) {
       console.error("Erro ao salvar dados no localStorage:", error);
     }
   };
 
-  // Método para logout: limpa token e dados do usuário
   const logout = () => {
     try {
       setAuthToken(null);
       setUser(null);
 
-      // Remove do localStorage
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
     } catch (error) {
@@ -55,7 +49,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook para consumir o AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

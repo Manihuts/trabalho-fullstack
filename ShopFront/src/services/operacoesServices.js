@@ -1,31 +1,36 @@
-import createAxiosInstance from "./createAxiosInstance";
+import axios from "axios";
+
+const server = "http://localhost:5071";
 
 
-export const operacoesService = () => {
-  
-  const apiClient = createAxiosInstance();
+export const OperacoesService = {
+  // Comprar produto
+  async comprarProduto(compraDto, token) {
+    try {
+      const response = await axios.post(`${server}/operacoes/comprar`, compraDto, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao comprar produto:", error);
+      throw error;
+    }
+  },
 
-  return {
-    // Comprar produto
-    comprarProduto: async (compraDto) => {
-      try {
-        const response = await apiClient.post(`/operacoes/comprar`, compraDto);
-        return response.data; // { Mensagem: resultado }
-      } catch (error) {
-        console.error("Erro ao comprar produto:", error.response?.data || error.message);
-        throw error;
-      }
-    },
-
-    // Vender produto
-    venderProduto: async (vendaDto) => {
-      try {
-        const response = await apiClient.post(`/operacoes/vender`, vendaDto);
-        return response.data; // { Mensagem: resultado }
-      } catch (error) {
-        console.error("Erro ao vender produto:", error.response?.data || error.message);
-        throw error;
-      }
-    },
-  };
+  // Vender produto
+  async venderProduto(vendaDto, token) {
+    try {
+      const response = await axios.post(`${server}/operacoes/vender`, vendaDto, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao vender produto:", error);
+      throw error;
+    }
+  },
 };

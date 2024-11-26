@@ -1,31 +1,45 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Col, Container, Row, Card, Form, Button } from "react-bootstrap";
+import { Col, Container, Row, Card, Form, Button, Alert } from "react-bootstrap";
 import { createInputHandler } from "../utils/formUtils";
-import { authServices } from "../services/authServices";
+import { AuthServices } from "../services/authServices";
 
 const Register = () => {
+  const [errorMessage, setErrorMessage] = useState("");
   const [user, setUser] = useState({
-    userEmail: "",
-    userPassword: "",
-    userName: "",
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
   });
+  const [error, setError] = useState("");
   const userInputHandler = createInputHandler(setUser, user);
   const navigate = useNavigate();
-  const service = authServices();
 
   const handleRegister = async () => {
     try {
-      await service.register(user.userEmail, user.userPassword, user.userName);
+      if (user.senha !== user.confirmarSenha) {
+        setError("As senhas não coincidem.");
+        return;
+      }
 
-      navigate("/login", {
-        state: { email: user.userEmail, password: user.userPassword },
-      });
+      const { confirmarSenha, ...userData } = user;
+
+
+      const payload = {
+        ...userData,
+        id: "", 
+        admin: false, 
+        saldo: 1000, 
+        carrinho: [], 
+      };
+
+      await AuthServices.register(payload);
+
+      alert("Registro bem-sucedido!");
     } catch (error) {
-      console.error(
-        "Erro ao registrar usuário:",
-        error.response?.data || error.message
-      );
+      console.error("Erro ao registrar usuário:", error.response?.data || error.message);
+      setErrorMessage("Falha ao registrar. Verifique os dados e tente novamente.");
     }
   };
 
@@ -46,12 +60,22 @@ const Register = () => {
               </Card.Header>
               <Card.Body>
                 <Form>
+                  {errorMessage && (
+                    <Alert variant="danger" className="mb-3">
+                      {errorMessage}
+                    </Alert>
+                  )}
+                  {error && (
+                    <Alert variant="danger" className="mb-3">
+                      {error}
+                    </Alert>
+                  )}
                   <Form.Group className="mb-3">
                     <Form.Control
                       type="text"
                       placeholder="Nome"
-                      value={user.userName}
-                      name="userName"
+                      value={user.nome}
+                      name="nome"
                       onChange={userInputHandler}
                     />
                   </Form.Group>
@@ -59,8 +83,8 @@ const Register = () => {
                     <Form.Control
                       type="email"
                       placeholder="E-mail"
-                      value={user.userEmail}
-                      name="userEmail"
+                      value={user.email}
+                      name="email"
                       onChange={userInputHandler}
                     />
                   </Form.Group>
@@ -68,8 +92,17 @@ const Register = () => {
                     <Form.Control
                       type="password"
                       placeholder="Senha"
-                      name="userPassword"
-                      value={user.userPassword}
+                      name="senha"
+                      value={user.senha}
+                      onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Control
+                      type="password"
+                      placeholder="Confirmação de Senha"
+                      name="confirmarSenha"
+                      value={user.confirmarSenha}
                       onChange={userInputHandler}
                     />
                   </Form.Group>
