@@ -22,10 +22,10 @@ const Inventario = () => {
                     const produtoData = await ProdutoService.getById(item.produtoId);
                     return {
                         ...item,
-                        id: produtoData.id, // Transfere o ID do produto
+                        id: produtoData.id, 
                         nome: produtoData.nome,
                         descricao: produtoData.descricao,
-                        quantidade: item.quantidade, // Usa a quantidade do inventário
+                        quantidade: item.quantidade,
                         preco: produtoData.preco,
                         imagem: produtoData.imagem,
                     }

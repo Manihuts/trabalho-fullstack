@@ -12,57 +12,38 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
       return;
     }
 
-    const userObject = user;  
-
-    const userId = userObject.Id; 
-    console.log('Tipo do user ', typeof user);
-    console.log(user);
-
     const compraDto = {
-      UsuarioId: userId, 
+      UsuarioId: user.Id, 
       ProdutoId: Number(product.id),  
       Quantidade: 1,  
     };
 
-    console.log("Tipo compraDto:", typeof compraDto);
-    console.log("Tipo userObject:", typeof userObject);
-    console.log("Tipo do authToken:", typeof authToken);
-    console.log("id usuario (compraDto.UsuarioId):", compraDto.UsuarioId);
-    console.log("id usuario (userObject.Id):", userId);
-
-    const logCompraDtoTypes = (compraDto) => {
-      console.log("Tipo de id (UsuarioId):", typeof compraDto.UsuarioId);
-      console.log("Tipo de produtoId:", typeof compraDto.ProdutoId);
-      console.log("Tipo de quantidade:", typeof compraDto.Quantidade);
-
-      if (typeof compraDto.UsuarioId !== 'string') {
-        console.error("Erro: id (UsuarioId) deve ser uma string!");
-      }
-
-      if (typeof compraDto.ProdutoId !== 'number') {
-        console.error("Erro: produtoId deve ser um número!");
-      }
-
-      if (typeof compraDto.Quantidade !== 'number') {
-        console.error("Erro: quantidade deve ser um número!");
-      }
-    };
-
-    logCompraDtoTypes(compraDto);
-
     try {
-
       await OperacoesService.comprarProduto(compraDto, authToken);
       alert("Compra realizada com sucesso!");
     } catch (error) {
-
       alert("Erro ao realizar compra: " + (error.response?.data || error.message));
     }
   };
 
-  const handleVenda = () => {
-    console.log("Handle Venda");
-    //vender produto
+  const handleVenda = async () => {
+    if (!authToken || !user) {
+      alert("Você precisa estar logado para vender!");
+      return;
+    }
+    
+    const vendaDto = {
+      UsuarioId: user.Id, 
+      ProdutoId: Number(product.id),  
+      Quantidade: 1 
+    };
+
+    try {
+      await OperacoesService.venderProduto(vendaDto, authToken);
+      alert("Venda realizada com sucesso!");
+    } catch (error) {
+      alert("Erro ao realizar venda: " + (error.response?.data || error.message));
+    }
   };
 
   return (
