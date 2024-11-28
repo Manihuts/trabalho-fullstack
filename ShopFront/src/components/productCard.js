@@ -12,45 +12,57 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
       return;
     }
 
-    console.log("Tipo do user:", typeof user);  // Verifique que agora é 'object'
-    console.log("Tipo do authToken:",typeof authToken);  // Isso vai ser 'string'
-    console.log("User:", user);  // O objeto user
-    console.log("user id ", user.Id);
-    console.log("Product", product);
+    const userObject = user;  
+
+    const userId = userObject.Id; 
+    console.log('Tipo do user ', typeof user);
+    console.log(user);
 
     const compraDto = {
-      id: user.Id,  // Acessando diretamente o id do objeto user
-      produtoId: product.id,
-      quantidade: 1,
+      UsuarioId: userId, 
+      ProdutoId: Number(product.id),  
+      Quantidade: 1,  
     };
 
-    console.log("CompraDTO:", compraDto);
+    console.log("Tipo compraDto:", typeof compraDto);
+    console.log("Tipo userObject:", typeof userObject);
+    console.log("Tipo do authToken:", typeof authToken);
+    console.log("id usuario (compraDto.UsuarioId):", compraDto.UsuarioId);
+    console.log("id usuario (userObject.Id):", userId);
+
+    const logCompraDtoTypes = (compraDto) => {
+      console.log("Tipo de id (UsuarioId):", typeof compraDto.UsuarioId);
+      console.log("Tipo de produtoId:", typeof compraDto.ProdutoId);
+      console.log("Tipo de quantidade:", typeof compraDto.Quantidade);
+
+      if (typeof compraDto.UsuarioId !== 'string') {
+        console.error("Erro: id (UsuarioId) deve ser uma string!");
+      }
+
+      if (typeof compraDto.ProdutoId !== 'number') {
+        console.error("Erro: produtoId deve ser um número!");
+      }
+
+      if (typeof compraDto.Quantidade !== 'number') {
+        console.error("Erro: quantidade deve ser um número!");
+      }
+    };
+
+    logCompraDtoTypes(compraDto);
 
     try {
-      await OperacoesService.comprarProduto(compraDto, authToken);  // Passando authToken diretamente
+
+      await OperacoesService.comprarProduto(compraDto, authToken);
       alert("Compra realizada com sucesso!");
     } catch (error) {
+
       alert("Erro ao realizar compra: " + (error.response?.data || error.message));
     }
   };
 
-  const handleAddCarrinho = async () => {
-    if (!authToken || !user) {
-      alert("Você precisa estar logado para adicionar ao carrinho!");
-      return;
-    }
-
-    const itemDto = {
-      usuarioId: user.id,  // Acessando diretamente a propriedade 'id' do objeto user
-      produtoId: product.id,
-      quantidade: 1,
-    };
-
-    try {
-      alert("Produto adicionado ao carrinho com sucesso!");
-    } catch (error) {
-      alert("Erro ao adicionar ao carrinho: " + (error.response?.data || error.message));
-    }
+  const handleVenda = () => {
+    console.log("Handle Venda");
+    //vender produto
   };
 
   return (
@@ -101,11 +113,15 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
                 Comprar
               </Button>
             )}
+            {isInventario && (
+              <Button variant="success" onClick={handleVenda} className="w-100 mt-2 btn-block"> 
+                Vender
+              </Button>
+            )}
           </div>
         </Card.Body>
       </Card>
     </div>
-    
   );
 };
 

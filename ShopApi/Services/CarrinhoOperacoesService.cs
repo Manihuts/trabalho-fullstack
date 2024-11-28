@@ -16,9 +16,6 @@ public class CarrinhoOperacoesService
         _db = db;
     }
 
-    /// <summary>
-    /// Retorna o valor total do carrinho de um usuário.
-    /// </summary>
     public async Task<decimal> ObterValorTotalAsync(long usuarioId)
     {
         var carrinho = await _db.Carrinhos
@@ -32,9 +29,7 @@ public class CarrinhoOperacoesService
         return carrinho.Itens.Sum(i => i.Quantidade * i.Preco);
     }
 
-    /// <summary>
-    /// Remove um item ou reduz a quantidade no carrinho.
-    /// </summary>
+  
     public async Task<string> AlterarItemCarrinhoAsync(long usuarioId, ItemCarrinhoDTO itemDto)
     {
         var carrinho = await _db.Carrinhos
@@ -70,16 +65,14 @@ public class CarrinhoOperacoesService
         return "Item atualizado no carrinho.";
     }
 
-    /// <summary>
-    /// Finaliza a compra do carrinho do usuário.
-    /// </summary>
+  
     public async Task<string> FinalizarCompraAsync(long usuarioId)
     {
         using var transaction = await _db.Database.BeginTransactionAsync();
 
         try
         {
-            // Buscar carrinho do usuário
+       
             var carrinho = await _db.Carrinhos
                 .Include(c => c.Itens)
                 .ThenInclude(i => i.Produto)
@@ -102,13 +95,13 @@ public class CarrinhoOperacoesService
                 if (produto == null || produto.Quantidade < item.Quantidade)
                     return $"Estoque insuficiente para o produto: {produto?.Nome ?? "desconhecido"}.";
 
-                // Atualizar estoque do produto
+               
                 produto.Quantidade -= item.Quantidade;
 
-                // Calcular o valor total
+               
                 totalCompra += item.Quantidade * item.Preco;
 
-                // Atualizar inventário do usuário
+       
                 var inventario = await _db.Inventarios
                     .FirstOrDefaultAsync(i => i.UsuarioId == usuarioId && i.ProdutoId == item.ProdutoId);
 
@@ -126,24 +119,24 @@ public class CarrinhoOperacoesService
                     });
                 }
 
-                // Criar DTO para o item
+  
                 itensDto.Add(new ItemCarrinhoDTO(item));
             }
 
-            // Verificar saldo do usuário
+
             if (usuario.Saldo < totalCompra)
                 return "Saldo insuficiente para finalizar a compra.";
 
-            // Atualizar saldo do usuário
+
             usuario.Saldo -= totalCompra;
 
-            // Limpar carrinho
+ 
             _db.ItensCarrinho.RemoveRange(carrinho.Itens);
 
             await _db.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            // Retornar um resumo da compra
+         
             return $"Compra finalizada com sucesso. Total: {totalCompra:C}. Itens comprados: {itensDto.Count}.";
         }
         catch (Exception ex)

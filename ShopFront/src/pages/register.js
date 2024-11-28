@@ -37,6 +37,7 @@ const Register = () => {
       await AuthServices.register(payload);
 
       alert("Registro bem-sucedido!");
+      //navigate("/login");
     } catch (error) {
       console.error("Erro ao registrar usuário:", error.response?.data || error.message);
       setErrorMessage("Falha ao registrar. Verifique os dados e tente novamente.");

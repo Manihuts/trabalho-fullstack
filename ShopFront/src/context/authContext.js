@@ -1,30 +1,29 @@
 import React, { createContext, useState, useContext } from "react";
 
-// Criação do contexto de autenticação
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Recuperando authToken e user do localStorage
+
   const [authToken, setAuthToken] = useState(() => {
     const token = localStorage.getItem("authToken");
-    return token ? token : null;  // O token é uma string
+    return token ? token : null;  
   });
 
   const [user, setUser] = useState(() => {
     try {
       const userData = localStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;  // O user é um objeto JSON
+      return userData;
     } catch (error) {
       console.error("Erro ao recuperar dados do usuário:", error);
-      return null;
+      return {};  
     }
   });
 
-  // Função de login que armazena os dados no localStorage
+
   const login = (token, userData) => {
     try {
       setAuthToken(token);
-      setUser(userData);
+      setUser(JSON.parse(userData));
 
       // Armazenando os dados no localStorage de maneira correta
       localStorage.setItem("authToken", token);  // Armazenando o token como string
@@ -34,14 +33,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função de logout que remove os dados do localStorage
+
   const logout = () => {
     try {
       setAuthToken(null);
-      setUser(null);
+      setUser({});  
 
       localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+      localStorage.removeItem("user"); 
     } catch (error) {
       console.error("Erro ao fazer logout:", error.message);
     }
@@ -54,7 +53,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook customizado para acessar o contexto de autenticação
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

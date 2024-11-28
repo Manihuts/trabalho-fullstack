@@ -4,9 +4,11 @@ const server = "http://localhost:5071";
 
 
 export const OperacoesService = {
-  // Comprar produto
+
   async comprarProduto(compraDto, token) {
     try {
+      console.log("Compraproduto token ", token, typeof token )
+      console.log("compra dto", compraDto)
       const response = await axios.post(`${server}/operacoes/comprar`, compraDto, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -19,7 +21,6 @@ export const OperacoesService = {
     }
   },
 
-  // Vender produto
   async venderProduto(vendaDto, token) {
     try {
       const response = await axios.post(`${server}/operacoes/vender`, vendaDto, {
