@@ -1,42 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import ProductCard from "./ProductCard";
-import { fetchProducts } from "../services/appServices"; 
+import ProductCard from "../components/productCard";
+import { ProdutoService } from "../services/produtoService";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const [products, setProducts] = useState([]);
-  const { user } = useAuth(); 
+  const [refresh, setRefresh] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
+  const fetchProducts = async () => {
+    try {
+      const productsData = await ProdutoService.getAll();
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
 
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await fetchProducts(); 
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-      }
-    };
-    getProducts();
-  }, []);
-
+    fetchProducts();
+    setRefresh(false);
+  }, [refresh]);
 
   const handleCreateProduct = () => {
-    console.log("Navegar para a página de criação de produto");
+    navigate("/create-product");
+  };
 
+  const atualizaPai = () => {
+    setRefresh(true);
   };
 
   return (
     <Container>
-      <h2 className="my-4">Loja</h2>
-      <Row>
-   
-        {user.admin && (
-          <Col xs={10} sm={6} md={4} lg={3} xl={3} className="mb-4">
+      <h2 className="my-4" style={styles.title}>
+        Loja de Produtos
+      </h2>
+
+        <Row className="g-6">
+          {products.map((product) => (
+            <Col xs={12} sm={6} md={4} lg={2} key={product.Id}>
+                <ProductCard
+                  product={product}
+                  isAdmin={user?.Admin}
+                  isInventario={false}
+                  atualizaPai={atualizaPai}
+                />
+            </Col>
+          ))}
+        </Row>
+
+      <div
+        style={{ display: "flex", alignItems: "self", justifyContent: "center", }}>
+        {user?.Admin && (
+          <Col xs={12} sm={6} md={4} lg={2}>
             <Card
               className="h-100 d-flex justify-content-center align-items-center"
-              style={{ border: "2px dashed gray" }}
+              style={{
+                border: "2px solid #000",
+                backgroundColor: "#2c2c2c",
+                color: "white",
+              }}
             >
               <Card.Body>
                 <Button
@@ -44,27 +70,42 @@ const Store = () => {
                   onClick={handleCreateProduct}
                   style={{ width: "100%" }}
                 >
-                  Criar Produto
+                  Registrar Produto
                 </Button>
               </Card.Body>
             </Card>
           </Col>
         )}
-
-        {products.map((product) => (
-          <ProductCard
-            key={product.Id}
-            product={product}
-            isCartContext={false} 
-            isAdmin={user.admin} 
-            handleEdit={() =>
-              console.log("Editar Produto:", product) 
-            }
-          />
-        ))}
-      </Row>
+      </div>
     </Container>
   );
+};
+
+const styles = {
+  title: {
+    fontWeight: "bold",
+    fontSize: 50,
+    color: "#ede43b",
+    textAlign: "center",
+    webkitTextStrokeWidth: "2px",
+    webkitTextStrokeColor: "#000",
+  },
+  scrollContainer: {
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+    paddingBottom: "1rem",
+  },
+  error: {
+    fontSize: 24,
+    color: "red",
+  },
+  div_horizontal: {
+    display: "flex",
+    flexDirection: "row", // Define a direção dos itens
+    overflowX: "auto", // Ativa a rolagem horizontal
+    gap: "1rem", // Espaçamento entre os cards
+    padding: "1rem",
+  }
 };
 
 export default Store;

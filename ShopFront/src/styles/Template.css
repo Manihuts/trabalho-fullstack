@@ -4,7 +4,7 @@
   padding: 0;
   width: 100vw; /* Largura total da viewport */
   height: 100vh; /* Altura total da viewport */
-  background-image: url('../../public/assets/backgroundStore.webp'); /* Caminho absoluto para a imagem */
+  background-image: url('../../public/assets/stone_wall.jpg'); /* Caminho absoluto para a imagem */
   background-size: cover; /* Faz a imagem preencher o fundo */
   background-position: center; /* Centraliza a imagem */
   background-repeat: no-repeat; /* Sem repetição */

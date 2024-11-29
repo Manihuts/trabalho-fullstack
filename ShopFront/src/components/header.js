@@ -1,73 +1,83 @@
-import React, { useEffect, useRef } from "react";
-import { Navbar, Nav, Button, Container } from "react-bootstrap";
+import React from "react";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { AuthServices } from "../services/authServices";
 
-const Header = () => {
-  const { authToken, user, login, logout } = useAuth();
-  const headerRef = useRef();
+const CustomNavbar = () => {
+  const { authToken, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const userObj = user;
+  const handleLogout = () => {
+    logout();
+    AuthServices.logout();
+    navigate("/login");
+  };
 
-  useEffect(() => {
-    const adjustScale = () => {
-      const scale = 1 / window.devicePixelRatio; 
-      if (headerRef.current) {
-        headerRef.current.style.transform = `scale(${scale})`;
-        headerRef.current.style.transformOrigin = "0 0";
-        headerRef.current.style.width = '100%';
-        headerRef.current.style.height = `${70}px`; 
-      }
-    };
-
-    adjustScale(); 
-    window.addEventListener("resize", adjustScale); 
-
-    return () => window.removeEventListener("resize", adjustScale);
-  }, []);
+  const getPageName = () => {
+    const path = window.location.pathname;
+    if (path === "/store") return "Store";
+    if (path === "/cart") return "Carrinho";
+    if (path === "/inventario") return "Inventário";
+  };
 
   return (
-    <Navbar
-      ref={headerRef}
-      expand="lg"
-      variant="dark"
-      style={{
-        backgroundColor: "#343a40", 
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 1000, 
-        overflow: "hidden", 
-      }}
-    >
+    <Navbar bg="dark" expand="lg" className="shadow-sm mb-4 py-3">
       <Container>
-        <Navbar.Brand href="#">Minha Loja</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
-            {!authToken ? (
-              <Button
-                variant="light"
-                onClick={() => login("fake-token", { name: "João" })}
+        <Navbar.Brand href="/">
+          <span
+            style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#fff" }}
+          >
+            {getPageName()}
+          </span>
+        </Navbar.Brand>
+
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
+          <Nav className="ms-auto d-flex align-items-center">
+            {authToken && user && (
+              <span
+                className="mr-3"
+                style={{ fontSize: "1.2rem", color: "#fff" }}
               >
-                Login
+                Olá, {userObj.Nome}!
+              </span>
+            )}
+
+            {authToken && user && (
+              <Button
+                variant="link"
+                onClick={() => navigate("/store")}
+                className="mr-3"
+                style={{ fontSize: "1.2rem", color: "#fff" }}
+              >
+                Store
               </Button>
-            ) : (
-              <>
-                <Nav.Link>Bem-vindo, {user?.name || "Usuário"}!</Nav.Link>
-                <Button variant="outline-light" onClick={logout}>
-                  Logout
-                </Button>
-                <Nav.Link href="#carrinho">
-                  <img
-                    src={
-                      user?.cartItems > 0
-                        ? "/assets/carrinho_com_items.png"
-                        : "/assets/carrinho_sem_items.png"
-                    }
-                    alt="Carrinho"
-                    style={{ width: "30px", height: "30px" }}
-                  />
-                </Nav.Link>
-              </>
+            )}
+
+            {authToken && user && user.Admin == false && (
+              <Button
+                variant="link"
+                onClick={() => navigate("/inventario")}
+                className="mr-3"
+                style={{ fontSize: "1.2rem", color: "#fff" }}
+              >
+                Inventário
+              </Button>
+            )}
+
+            {authToken && (
+              <Button
+                variant="link"
+                onClick={handleLogout}
+                style={{
+                  fontSize: "1.2rem",
+                  color: "#fff",
+                  fontWeight: "bold",
+                }}
+              >
+                Logout
+              </Button>
             )}
           </Nav>
         </Navbar.Collapse>
@@ -76,4 +86,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default CustomNavbar;

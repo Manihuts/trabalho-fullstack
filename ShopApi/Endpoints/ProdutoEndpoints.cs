@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopApi.DTOs;
 using ShopApi.Infra;
 using ShopApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShopApi.Endpoints;
 
@@ -14,9 +15,9 @@ public static class ProdutoEndpoints
 
         group.MapGet("/", GetAsync);
         group.MapGet("/{id}", GetByIdAsync);
-        group.MapPost("/", PostAsync);
-        group.MapPut("/{id}", PutAsync);
-        group.MapDelete("/{id}", DeleteAsync);
+        group.MapPost("/", PostAsync).RequireAuthorization("Admin");
+        group.MapPut("/{id}", PutAsync).RequireAuthorization("Admin");
+        group.MapDelete("/{id}", DeleteAsync).RequireAuthorization("Admin");
     }
 
     private static async Task<IResult> GetAsync(ShopContext db)

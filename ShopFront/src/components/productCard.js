@@ -1,51 +1,119 @@
 import React from "react";
-import { Col, Card, Button } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
+import { useAuth } from "../context/authContext";
+import { OperacoesService } from "../services/operacoesServices";
+import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({
-  product,
-  handleDelete,
-  handleIncreaseQuantity,
-  isCartContext,
-  isAdmin,
-  handleEdit,
-}) => {
+const ProductCard = ({ product, isAdmin, isInventario, atualizaPai }) => {
+  const { authToken, user } = useAuth();  // Acessa diretamente o authToken (string) e user (objeto)
+  const navigate = useNavigate();
+
+  const handleCompra = async () => {
+    if (!authToken || !user) {
+      alert("Você precisa estar logado para comprar!");
+      return;
+    }
+
+    const compraDto = {
+      UsuarioId: user.Id, 
+      ProdutoId: product.id,  
+      Quantidade: 1,  
+    };
+
+    try {
+      await OperacoesService.comprarProduto(compraDto, authToken);
+      alert("Compra realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai(); // indica ao componente pai que é hora de atualizar
+      }
+    } catch (error) {
+      alert("Erro ao realizar compra: " + (error.response?.data || error.message));
+    }
+  };
+
+  const handleVenda = async () => {
+    if (!authToken || !user) {
+      alert("Você precisa estar logado para vender!");
+      return;
+    }
+    
+    const vendaDto = {
+      UsuarioId: user.Id, 
+      ProdutoId: product.id,  
+      Quantidade: 1 
+    };
+
+    try {
+      await OperacoesService.venderProduto(vendaDto, authToken);
+      alert("Venda realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai(); // indica ao componente pai que é hora de atualizar
+      }
+    } catch (error) {
+      alert("Erro ao realizar venda: " + (error.response?.data || error.message));
+    }
+  };
+
+  const handleEdit = (id) =>{
+    navigate(`/edit-product/${id}`);
+  }
+  
   return (
-    <Col
-      xs={10}
-      sm={6}
-      md={4}
-      lg={3}
-      xl={3}
-      className="mb-4 d-flex justify-content-center"
-    >
-      <Card style={{ width: "18rem" }}>
-        <Card.Img variant="top" src={product.productImage} />
-        <Card.Body>
-          <Card.Title>{product.Nome}</Card.Title>
-          <Card.Title>R$ {product.Preco.toFixed(2)}</Card.Title>
-          <Card.Text>{product.Descricao}</Card.Text>
-          <Card.Text>Quantidade: {product.Quantidade}</Card.Text>
-          {isCartContext ? (
-            <div className="d-flex justify-content-between">
-              <Button
-                variant="danger"
-                onClick={handleDelete}
-                style={{ marginRight: "0.5rem" }}
-              >
-                Remover
+    <div style={{flex: 1}}>
+      <Card
+        className="mb-4"
+        style={{
+          flex: 1,
+          alignItems: "center",
+          width: "100%",
+          height: "36rem",
+          backgroundColor: "#2c2c2c",
+          color: "white",
+          borderRadius: "8px",
+        }}
+      >
+          <Card.Img
+            variant="top"
+            src={(product.imagem) !== "" ? product.imagem : "/assets/carrinho_com_items.png"}
+            style={{
+              width: "80%",
+              marginTop: 10,
+              objectFit: "cover",
+              borderRadius: "8px 8px 0 0",
+            }}
+          />
+        
+        <Card.Body style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Card.Title style={{ fontWeight: "bold", fontSize: "1.3rem", textAlign: "center" }}>
+            {product.nome}
+          </Card.Title>
+          <Card.Text style={{ fontWeight: "bold" }}>
+            Preço: <span style={{ color: "#ffc107" }}>R$ {product.preco}</span>
+          </Card.Text>
+          <Card.Text>
+            <strong>Quantidade:</strong> {product.quantidade}
+          </Card.Text>
+          <Card.Text style={{ fontStyle: "italic", fontSize: "0.9rem" }}>{product.descricao}</Card.Text>
+          <div style={{flex: 1, width: "100%", alignContent: "flex-end"}}>
+            {isAdmin && (
+              <Button variant="warning" onClick={()=>handleEdit(product.id)} className="w-100 mt-2 btn-block" >
+                Editar Produto
               </Button>
-              <Button variant="primary" onClick={handleIncreaseQuantity}>
-                +1
+            )}
+            {!isInventario && !isAdmin&&(
+              <Button variant="success" onClick={handleCompra} className="w-100 mt-2 btn-block" >
+                Comprar
               </Button>
-            </div>
-          ) : isAdmin ? (
-            <Button variant="warning" onClick={handleEdit}>
-              Editar Produto
-            </Button>
-          ) : null}
+            )}
+            {isInventario && (
+              <Button variant="success" onClick={handleVenda} className="w-100 mt-2 btn-block"> 
+                Vender
+              </Button>
+            )}
+          </div>
         </Card.Body>
       </Card>
-    </Col>
+    </div>
   );
 };
 

@@ -1,33 +1,31 @@
 import React, { createContext, useState, useContext } from "react";
 
-
 export const AuthContext = createContext();
 
-
 export const AuthProvider = ({ children }) => {
-  const [authToken, setAuthToken] = useState(() => {
 
+  const [authToken, setAuthToken] = useState(() => {
     const token = localStorage.getItem("authToken");
-    return token ? token : null;
+    return token ? token : null;  
   });
 
   const [user, setUser] = useState(() => {
     try {
       const userData = localStorage.getItem("user");
-      return userData ? JSON.parse(userData) : null;
+      return userData;
     } catch (error) {
       console.error("Erro ao recuperar dados do usuário:", error);
-      return null;
+      return {};  
     }
   });
-
 
   const login = (token, userData) => {
     try {
       setAuthToken(token);
-      setUser(userData);
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(JSON.parse(userData));
+
+      localStorage.setItem("authToken", token);  
+      localStorage.setItem("user", userData);  
     } catch (error) {
       console.error("Erro ao salvar dados no localStorage:", error);
     }
@@ -36,11 +34,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     try {
       setAuthToken(null);
-      setUser(null);
+      setUser({});  
+
       localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+      localStorage.removeItem("user"); 
     } catch (error) {
-      console.error("Erro ao remover dados do localStorage:", error);
+      console.error("Erro ao fazer logout:", error.message);
     }
   };
 
@@ -50,6 +49,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

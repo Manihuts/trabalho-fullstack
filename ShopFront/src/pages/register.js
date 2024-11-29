@@ -1,76 +1,137 @@
-// import React, { useContext, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { Col, Container, Row, Card, Form, Button } from "react-bootstrap";
-// import { createInputHandler } from "../utils/formUtils";
-// import { AuthContext } from "../context/authContext";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Col, Container, Row, Card, Form, Button, Alert } from "react-bootstrap";
+import { createInputHandler } from "../utils/formUtils";
+import { AuthServices } from "../services/authServices";
 
+const Register = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const [user, setUser] = useState({
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+    isadmin: false
+  });
+  const [error, setError] = useState("");
+  const userInputHandler = createInputHandler(setUser, user);
+  const navigate = useNavigate();
 
-// const Register = () => {
-//   const [user, setUser] = useState({ userEmail: "", userPassword: "" });
-//   const userInputHandler = createInputHandler(setUser, user);
-//   const { login } = useContext(AuthContext);
-//   const navigate = useNavigate();
+  const handleRegister = async () => {
+    try {
+      if (user.senha !== user.confirmarSenha) {
+        setError("As senhas não coincidem.");
+        return;
+      }
 
-//   const handleLogin = async (user) => {
-//     try {
-//       const response = await login(user);
-//       const { token, user: userData } = response.data.data;
-//       login(token, userData);
-//       navigate("/store");
-//     } catch (error) {
-//       console.error("Erro ao fazer login:", error);
-//     }
-//   };
+      const { confirmarSenha, ...userData } = user;
 
+      const payload = {
+        ...userData,
+        id: "", 
+        admin: user.isadmin, 
+        saldo: 1000, 
+        carrinho: [], 
+      };
 
-//   return (
-//     <>
-//       <Container
-//         className="fluid mt-3 d-flex justify-content-center align-items-center"
-//         style={{ minHeight: "100vh", minWidth: "100vw" }}
-//       >
-//         <Row>
-//           <Col xs={10} sm={10} md={10} lg={10} xl={10}>
-//             <Card className="shadow-lg">
-//               <Card.Header
-//                 className="p-3 d-flex justify-content-center align-items-center"
-//                 style={{ backgroundColor: "lightgray" }}
-//               >
-//                 Login
-//               </Card.Header>
-//               <Card.Body>
-//                 <Form>
-//                   <Form.Group className="mb-3">
-//                     <Form.Control
-//                       type="text"
-//                       placeholder="E-mail"
-//                       value={user.userEmail}
-//                       name="userEmail"
-//                       onChange={userInputHandler}
-//                     />
-//                   </Form.Group>
-//                   <Form.Group className="mb-3">
-//                     <Form.Control
-//                       type="password"
-//                       placeholder="Senha"
-//                       name="userPassword"
-//                       value={user.userPassword}
-//                       onChange={userInputHandler}
-//                     />
-//                   </Form.Group>
-//                   <Form.Group className="mb-3 d-flex justify-content-center align-items-center">
-//                     <Button variant="secondary" className="w-75" onClick={() => handleLogin({ ...user })}>
-//                       Entrar
-//                     </Button>
-//                   </Form.Group>           
-//                 </Form>
-//               </Card.Body>
-//             </Card>
-//           </Col>
-//         </Row>
-//       </Container>
-//     </>
-//   );
-// };
+      await AuthServices.register(payload);
 
-// export default Register;
+      alert("Registro bem-sucedido!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Erro ao registrar usuário:", error.response?.data || error.message);
+      setErrorMessage("Falha ao registrar. Verifique os dados e tente novamente.");
+    }
+  };
+
+  return (
+    <>
+      <Container
+        className="fluid mt-3 d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh", minWidth: "100vw" }}
+      >
+        <Row>
+          <Col xs={10} sm={10} md={10} lg={10} xl={10}>
+            <Card className="shadow-lg">
+              <Card.Header
+                className="p-3 d-flex justify-content-center align-items-center"
+                style={{ backgroundColor: "lightgray" }}
+              >
+                Registrar
+              </Card.Header>
+              <Card.Body>
+                <Form>
+                  {errorMessage && (
+                    <Alert variant="danger" className="mb-3">
+                      {errorMessage}
+                    </Alert>
+                  )}
+                  {error && (
+                    <Alert variant="danger" className="mb-3">
+                      {error}
+                    </Alert>
+                  )}
+                  <Form.Group className="mb-3">
+                    <Form.Control
+                      type="text"
+                      placeholder="Nome"
+                      value={user.nome}
+                      name="nome"
+                      onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Control
+                      type="email"
+                      placeholder="E-mail"
+                      value={user.email}
+                      name="email"
+                      onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Control
+                      type="password"
+                      placeholder="Senha"
+                      name="senha"
+                      value={user.senha}
+                      onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Control
+                      type="password"
+                      placeholder="Confirmação de Senha"
+                      name="confirmarSenha"
+                      value={user.confirmarSenha}
+                      onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Check
+                      name="isadmin"
+                      label="Admin?"
+                      checked={user.isadmin}
+                      onChange={(e) => setUser({ ...user, isadmin: e.target.checked })}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3 d-flex justify-content-center align-items-center">
+                    <Button
+                      variant="success"
+                      className="w-75"
+                      onClick={handleRegister}
+                    >
+                      Registrar
+                    </Button>
+                  </Form.Group>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
+};
+
+export default Register;
