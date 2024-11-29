@@ -2,10 +2,12 @@ import React from "react";
 import { Card, Button } from "react-bootstrap";
 import { useAuth } from "../context/authContext";
 import { OperacoesService } from "../services/operacoesServices";
+import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
+const ProductCard = ({ product, isAdmin, isInventario }) => {
   const { authToken, user } = useAuth();  // Acessa diretamente o authToken (string) e user (objeto)
-
+  
+  const navigate = useNavigate();
   const handleCompra = async () => {
     if (!authToken || !user) {
       alert("Você precisa estar logado para comprar!");
@@ -37,7 +39,8 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
       ProdutoId: Number(product.id),  
       Quantidade: 1 
     };
-
+    console.log("Id do produto e o tipo: ", product.id, typeof product.id)
+    console.log("produuto: ", product, typeof product)
     try {
       await OperacoesService.venderProduto(vendaDto, authToken);
       alert("Venda realizada com sucesso!");
@@ -45,6 +48,13 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
       alert("Erro ao realizar venda: " + (error.response?.data || error.message));
     }
   };
+
+
+    const handleEdit = (id) =>{
+      console.log("ID do produto e tipo: ",id, typeof id)
+        navigate(`/edit-product/${id}`);
+    }
+  
 
   return (
     <div style={{flex: 1}}>
@@ -85,11 +95,11 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
           <Card.Text style={{ fontStyle: "italic", fontSize: "0.9rem" }}>{product.descricao}</Card.Text>
           <div style={{flex: 1, width: "100%", alignContent: "flex-end"}}>
             {isAdmin && (
-              <Button variant="warning" onClick={handleEdit} className="w-100 mt-2 btn-block" >
+              <Button variant="warning" onClick={()=>handleEdit(product.id)} className="w-100 mt-2 btn-block" >
                 Editar Produto
               </Button>
             )}
-            {!isInventario && (
+            {!isInventario && !isAdmin&&(
               <Button variant="success" onClick={handleCompra} className="w-100 mt-2 btn-block" >
                 Comprar
               </Button>

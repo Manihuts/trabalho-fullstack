@@ -2,7 +2,7 @@ import axios from "axios";
 
 const server = "http://localhost:5071";
 
-export const InventarioServices = {
+export const InventarioServices  = {
   async getByUsuario(usuarioId, token) {
     try {
       const response = await axios.get(`${server}/inventario/${usuarioId}`, {

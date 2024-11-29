@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ShopContext>();
 builder.Services.AddScoped<OperacoesService>();
-builder.Services.AddScoped<CarrinhoOperacoesService>();
+
 
 
 // Hash do password
@@ -24,14 +24,24 @@ builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>
 
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddAuthorization(options =>
+{
+    // Configuração da política "Admin"
+    options.AddPolicy("Admin", policy =>
+    {
+        policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Admin");
+    });
+});
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = "Bearer";
     options.DefaultChallengeScheme = "Bearer";
+    
 })
 .AddJwtBearer("Bearer", options =>
 {
     options.SaveToken = true;
+  
     
     options.Events = new JwtBearerEvents
     {
@@ -74,8 +84,9 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes("superchavesecretamegablastermatadoradenoobsplustripleheadshotcarpadoinvertido") 
         )
-    };
+    };    
 });
+
 
 
 
@@ -102,13 +113,10 @@ app.UseCors(builder => builder
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.AddProdutoEndpoints();
 app.AddUsuarioEndpoints();
-app.AddCarrinhoEndpoints();
 app.AddInventarioEndpoints();
-app.AddItemCarrinhoEndpoints();
 app.AddOperacoesEndpoints();
-app.AddCarrinhoOperacoesEndpoints();
+
 
 app.Run();

@@ -8,13 +8,16 @@ public class ShopContext : DbContext
 {
     public DbSet<Produto> Produtos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
-    public DbSet<Carrinho> Carrinhos { get; set; } 
     public DbSet<Inventario> Inventarios { get; set; }
-    public DbSet<ItemCarrinho> ItensCarrinho { get; set; }
-    
     private readonly string path;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public ShopContext()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "produto.db");
     }
@@ -26,20 +29,6 @@ public class ShopContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Usuario>()
-            .HasOne(u => u.Carrinho)
-            .WithOne(c => c.Usuario)
-            .HasForeignKey<Carrinho>(c => c.UsuarioId);
-
-        modelBuilder.Entity<Carrinho>()
-            .HasMany(c => c.Itens)
-            .WithOne(i => i.Carrinho)
-            .HasForeignKey(i => i.CarrinhoId);
-
-        modelBuilder.Entity<ItemCarrinho>()
-            .HasOne(i => i.Produto)
-            .WithMany()
-            .HasForeignKey(i => i.ProdutoId);
 
         modelBuilder.Entity<Usuario>()
             .HasMany(u => u.Inventario)

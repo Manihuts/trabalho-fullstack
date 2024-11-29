@@ -17,6 +17,7 @@ export const ProdutoService = {
 
   async getById(id) {
     try {
+      console.log("Id e o tipo do id do produto buscado: ", id, typeof id)
       const response = await axios.get(`${server}/produtos/${id}`);
       return response.data;
     } catch (error) {

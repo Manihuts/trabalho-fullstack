@@ -10,34 +10,14 @@ using ShopApi.Infra;
 namespace ShopApi.Migrations
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20241125204734_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241129145403_AdicionarProdutosIniciais")]
+    partial class AdicionarProdutosIniciais
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
-
-            modelBuilder.Entity("ShopApi.Models.Carrinho", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("UsuarioId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("Carrinhos");
-                });
 
             modelBuilder.Entity("ShopApi.Models.Inventario", b =>
                 {
@@ -61,33 +41,6 @@ namespace ShopApi.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("Inventarios");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.ItemCarrinho", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("CarrinhoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Preco")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("ProdutoId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CarrinhoId");
-
-                    b.HasIndex("ProdutoId");
-
-                    b.ToTable("ItensCarrinho");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Produto", b =>
@@ -132,6 +85,10 @@ namespace ShopApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("HashSenha")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -139,24 +96,9 @@ namespace ShopApi.Migrations
                     b.Property<decimal>("Saldo")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.Carrinho", b =>
-                {
-                    b.HasOne("ShopApi.Models.Usuario", "Usuario")
-                        .WithOne("Carrinho")
-                        .HasForeignKey("ShopApi.Models.Carrinho", "UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("ShopApi.Models.Inventario", b =>
@@ -178,35 +120,8 @@ namespace ShopApi.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ShopApi.Models.ItemCarrinho", b =>
-                {
-                    b.HasOne("ShopApi.Models.Carrinho", "Carrinho")
-                        .WithMany("Itens")
-                        .HasForeignKey("CarrinhoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ShopApi.Models.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Carrinho");
-
-                    b.Navigation("Produto");
-                });
-
-            modelBuilder.Entity("ShopApi.Models.Carrinho", b =>
-                {
-                    b.Navigation("Itens");
-                });
-
             modelBuilder.Entity("ShopApi.Models.Usuario", b =>
                 {
-                    b.Navigation("Carrinho")
-                        .IsRequired();
-
                     b.Navigation("Inventario");
                 });
 #pragma warning restore 612, 618

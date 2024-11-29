@@ -14,6 +14,7 @@ const EditProduct = () => {
     Quantidade: "",
     Descricao: "",
     Imagem: "",
+    Id:"", 
   });
   const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null);
@@ -22,13 +23,16 @@ const EditProduct = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
+
         const product = await ProdutoService.getById(id); 
+        console.log("produto buscado: ", product, typeof product)
         setProductData({
-          Nome: product.Nome,
-          Preco: product.Preco,
-          Quantidade: product.Quantidade,
-          Descricao: product.Descricao,
-          Imagem: product.Imagem,
+          Nome: product.nome,
+          Preco: product.preco,
+          Quantidade:product.quantidade,
+          Descricao: product.descricao,
+          Imagem: product.imagem,
+          Id:product.id
         });
       } catch (error) {
         setError("Erro ao carregar dados do produto.");
@@ -37,18 +41,18 @@ const EditProduct = () => {
         setLoading(false);
       }
     };
-
     fetchProduct();
   }, [id]);
 
   const productHandler = createInputHandler(setProductData, productData); 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setLoading(true); 
 
     try {
-      const token = authToken; 
-      const response = await ProdutoService.update(id, productData, token); 
+
+      const response = await ProdutoService.update(productData.Id, productData,authToken )
       console.log("Produto atualizado com sucesso:", response);
       navigate("/store", { state: { refresh: true } });
     } catch (error) {
@@ -62,8 +66,7 @@ const EditProduct = () => {
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const token = "token";
-      await ProdutoService.delete(id, token);
+      await ProdutoService.delete(productData.Id, authToken);
       console.log("Produto excluído com sucesso");
       navigate("/store", { state: { refresh: true } });
     } catch (error) {
@@ -148,7 +151,7 @@ const EditProduct = () => {
                     </Button>
                   </Form.Group>
                   <Form.Group className="mb-3 d-flex justify-content-center align-items-center">
-                    <Button variant="secondary" className="w-75" onClick={() => navigate("/home")}>
+                    <Button variant="secondary" className="w-75" onClick={() => navigate("/store")}>
                       Cancelar
                     </Button>
                   </Form.Group>

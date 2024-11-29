@@ -24,10 +24,8 @@ export const AuthProvider = ({ children }) => {
     try {
       setAuthToken(token);
       setUser(JSON.parse(userData));
-
-      // Armazenando os dados no localStorage de maneira correta
-      localStorage.setItem("authToken", token);  // Armazenando o token como string
-      localStorage.setItem("user", userData);  // Armazenando o user como string JSON
+      localStorage.setItem("authToken", token);  
+      localStorage.setItem("user", userData);  
     } catch (error) {
       console.error("Erro ao salvar dados no localStorage:", error);
     }

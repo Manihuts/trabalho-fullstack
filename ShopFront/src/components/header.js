@@ -14,14 +14,6 @@ const CustomNavbar = () => {
     navigate("/login");
   };
 
-  // const getCartIcon = () => {
-  //   const cartImage = user?.carrinho && user.carrinho.length > 0
-  //     ? '/assets/carrinho_com_itens.png'
-  //     : '/assets/carrinho_sem_itens.png';
-
-  //   return <img src={cartImage} alt="Carrinho" style={{ width: '35px', height: '35px' }} />;
-  // };
-
   const getPageName = () => {
     const path = window.location.pathname;
     if (path === "/store") return "Store";
@@ -52,15 +44,6 @@ const CustomNavbar = () => {
               </span>
             )}
 
-            {/* <Button
-              variant="link"
-              onClick={() => navigate('/cart')}
-              className="mr-3 d-flex align-items-center"
-              style={{ fontSize: '1.2rem', color: '#fff' }}
-            >
-              {getCartIcon()}
-            </Button> */}
-
             {authToken && user && (
               <Button
                 variant="link"
@@ -72,7 +55,7 @@ const CustomNavbar = () => {
               </Button>
             )}
 
-            {authToken && user && (
+            {authToken && user && user.Admin == false && (
               <Button
                 variant="link"
                 onClick={() => navigate("/inventario")}

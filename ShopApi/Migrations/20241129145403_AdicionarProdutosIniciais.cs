@@ -4,13 +4,10 @@
 
 namespace ShopApi.Migrations
 {
-    /// <summary>
-    /// Migration para adicionar produtos iniciais ao banco de dados.
-    /// </summary>
+    /// <inheritdoc />
     public partial class AdicionarProdutosIniciais : Migration
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
+         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
                 INSERT INTO Produtos (Nome, Descricao, Quantidade, Preco, Imagem) 
@@ -24,7 +21,6 @@ namespace ShopApi.Migrations
             ");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Col, Container, Row, Card, Form, Button } from "react-bootstrap";
+import { Col, Container, Row, Card, Form, Button, Alert } from "react-bootstrap";
 import { createInputHandler } from "../utils/formUtils";
 import { ProdutoService } from "../services/produtoService"; 
 import { useNavigate } from "react-router-dom";
@@ -12,8 +12,9 @@ const CreateProduct = () => {
         Descricao: "",
         Quantidade: "",
         Imagem: "",
+
     });
-    const {authToken, user} = useAuth();
+    const {authToken} = useAuth();
     const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
 
@@ -28,7 +29,7 @@ const CreateProduct = () => {
       navigate("/dashboard", { state: { refresh: true } }); 
     } catch (error) {
       setError("Erro ao criar produto. Tente novamente.");
-      console.error("Erro ao criar produto:", error);
+     console.log("Erro ao criar produto:", error);
     } finally {
       setLoading(false);
     }

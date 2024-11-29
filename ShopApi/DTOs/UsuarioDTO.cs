@@ -13,7 +13,7 @@ public class UsuarioDTO
         Email = usuario.Email;
         Admin = usuario.Admin;
         Saldo = usuario.Saldo;
-        Carrinho = usuario.Carrinho?.Itens?.ConvertAll(i => new ItemCarrinhoDTO(i)) ?? new List<ItemCarrinhoDTO>();;
+        
     }
 
     public string Id { get; set; } = string.Empty;
@@ -21,7 +21,7 @@ public class UsuarioDTO
     public string Email { get; set; } = string.Empty;
     public bool Admin { get; set; } = false;
     public decimal Saldo { get; set; } = 1000;
-    public List<ItemCarrinhoDTO> Carrinho { get; set; } = new List<ItemCarrinhoDTO>();
+
 
     public Usuario GetModel()
     {

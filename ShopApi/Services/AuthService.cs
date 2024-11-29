@@ -72,6 +72,7 @@ public class AuthService
         new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
         new Claim(ClaimTypes.Name, usuario.Email),
         new Claim(ClaimTypes.Role, usuario.Admin ? "Admin" : "User")
+
     };
 
     var usuarioDTO = new UsuarioDTO(usuario);
