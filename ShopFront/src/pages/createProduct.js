@@ -18,7 +18,6 @@ const CreateProduct = () => {
     const [loading, setLoading] = useState(false); 
   const [error, setError] = useState(null); 
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true); 
@@ -26,7 +25,7 @@ const CreateProduct = () => {
       const token = authToken; 
       const response = await ProdutoService.create(product, token); 
       console.log("Produto criado com sucesso:", response);
-      navigate("/dashboard", { state: { refresh: true } }); 
+      navigate("/store"); 
     } catch (error) {
       setError("Erro ao criar produto. Tente novamente.");
      console.log("Erro ao criar produto:", error);

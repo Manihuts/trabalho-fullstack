@@ -7,26 +7,30 @@ import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const [products, setProducts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      console.log(user);
+  const fetchProducts = async () => {
+    try {
+      const productsData = await ProdutoService.getAll();
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
 
-      try {
-        const productsData = await ProdutoService.getAll();
-        setProducts(productsData);
-        console.log("products data ", productsData, typeof productsData)
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-      }
-    };
+  useEffect(() => {
     fetchProducts();
-  }, []);
+    setRefresh(false);
+  }, [refresh]);
 
   const handleCreateProduct = () => {
     navigate("/create-product");
+  };
+
+  const atualizaPai = () => {
+    setRefresh(true);
   };
 
   return (
@@ -35,26 +39,21 @@ const Store = () => {
         Loja de Produtos
       </h2>
 
-      <Row className="g-6">
-        {products.map((product) => (
-          <Col xs={12} sm={6} md={4} lg={2} key={product.Id}>
-            <ProductCard
-              product={product}
-              isAdmin={user?.Admin}
-             // handleEdit={() => handleEditProduct(product.Id)}
-              isInventario={false}
-            />
-          </Col>
-        ))}
-      </Row>
+        <Row className="g-6">
+          {products.map((product) => (
+            <Col xs={12} sm={6} md={4} lg={2} key={product.Id}>
+                <ProductCard
+                  product={product}
+                  isAdmin={user?.Admin}
+                  isInventario={false}
+                  atualizaPai={atualizaPai}
+                />
+            </Col>
+          ))}
+        </Row>
 
       <div
-        style={{
-          display: "flex",
-          alignItems: "self",
-          justifyContent: "center",
-        }}
-      >
+        style={{ display: "flex", alignItems: "self", justifyContent: "center", }}>
         {user?.Admin && (
           <Col xs={12} sm={6} md={4} lg={2}>
             <Card
@@ -100,6 +99,13 @@ const styles = {
     fontSize: 24,
     color: "red",
   },
+  div_horizontal: {
+    display: "flex",
+    flexDirection: "row", // Define a direção dos itens
+    overflowX: "auto", // Ativa a rolagem horizontal
+    gap: "1rem", // Espaçamento entre os cards
+    padding: "1rem",
+  }
 };
 
 export default Store;

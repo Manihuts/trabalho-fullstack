@@ -19,18 +19,17 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-
   const login = (token, userData) => {
     try {
       setAuthToken(token);
       setUser(JSON.parse(userData));
+
       localStorage.setItem("authToken", token);  
       localStorage.setItem("user", userData);  
     } catch (error) {
       console.error("Erro ao salvar dados no localStorage:", error);
     }
   };
-
 
   const logout = () => {
     try {

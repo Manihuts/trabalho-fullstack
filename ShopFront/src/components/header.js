@@ -40,7 +40,7 @@ const CustomNavbar = () => {
                 className="mr-3"
                 style={{ fontSize: "1.2rem", color: "#fff" }}
               >
-                Bem-vindo, {userObj.Nome}!
+                Olá, {userObj.Nome}!
               </span>
             )}
 
@@ -65,18 +65,6 @@ const CustomNavbar = () => {
                 Inventário
               </Button>
             )}
-
-            {/* <Button
-              variant="link"
-              onClick={() => navigate(authToken ? '/store' : '/login')}
-              style={{
-                fontSize: '1.2rem',
-                color: '#fff',
-                fontWeight: 'bold',
-              }}
-            >
-              {authToken ? 'Store' : 'Login'}
-            </Button> */}
 
             {authToken && (
               <Button

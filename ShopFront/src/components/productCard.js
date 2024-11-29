@@ -4,10 +4,10 @@ import { useAuth } from "../context/authContext";
 import { OperacoesService } from "../services/operacoesServices";
 import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({ product, isAdmin, isInventario }) => {
+const ProductCard = ({ product, isAdmin, isInventario, atualizaPai }) => {
   const { authToken, user } = useAuth();  // Acessa diretamente o authToken (string) e user (objeto)
-  
   const navigate = useNavigate();
+
   const handleCompra = async () => {
     if (!authToken || !user) {
       alert("Você precisa estar logado para comprar!");
@@ -16,13 +16,16 @@ const ProductCard = ({ product, isAdmin, isInventario }) => {
 
     const compraDto = {
       UsuarioId: user.Id, 
-      ProdutoId: Number(product.id),  
+      ProdutoId: product.id,  
       Quantidade: 1,  
     };
 
     try {
       await OperacoesService.comprarProduto(compraDto, authToken);
       alert("Compra realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai(); // indica ao componente pai que é hora de atualizar
+      }
     } catch (error) {
       alert("Erro ao realizar compra: " + (error.response?.data || error.message));
     }
@@ -36,26 +39,25 @@ const ProductCard = ({ product, isAdmin, isInventario }) => {
     
     const vendaDto = {
       UsuarioId: user.Id, 
-      ProdutoId: Number(product.id),  
+      ProdutoId: product.id,  
       Quantidade: 1 
     };
-    console.log("Id do produto e o tipo: ", product.id, typeof product.id)
-    console.log("produuto: ", product, typeof product)
+
     try {
       await OperacoesService.venderProduto(vendaDto, authToken);
       alert("Venda realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai(); // indica ao componente pai que é hora de atualizar
+      }
     } catch (error) {
       alert("Erro ao realizar venda: " + (error.response?.data || error.message));
     }
   };
 
-
-    const handleEdit = (id) =>{
-      console.log("ID do produto e tipo: ",id, typeof id)
-        navigate(`/edit-product/${id}`);
-    }
+  const handleEdit = (id) =>{
+    navigate(`/edit-product/${id}`);
+  }
   
-
   return (
     <div style={{flex: 1}}>
       <Card
@@ -64,7 +66,7 @@ const ProductCard = ({ product, isAdmin, isInventario }) => {
           flex: 1,
           alignItems: "center",
           width: "100%",
-          height: "40rem",
+          height: "36rem",
           backgroundColor: "#2c2c2c",
           color: "white",
           borderRadius: "8px",
@@ -72,8 +74,7 @@ const ProductCard = ({ product, isAdmin, isInventario }) => {
       >
           <Card.Img
             variant="top"
-            src={product.imagem || "https://via.placeholder.com/150"}
-            alt={product.nome}
+            src={(product.imagem) !== "" ? product.imagem : "/assets/carrinho_com_items.png"}
             style={{
               width: "80%",
               marginTop: 10,
