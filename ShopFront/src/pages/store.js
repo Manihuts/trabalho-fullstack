@@ -12,6 +12,8 @@ const Store = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      console.log(user);
+      
       try {
         const productsData = await ProdutoService.getAll();
         setProducts(productsData);
@@ -35,29 +37,8 @@ const Store = () => {
       <h2 className="my-4" style={styles.title}>
         Loja de Produtos
       </h2>
+
       <Row className="g-6">
-        {user?.admin && (
-          <Col xs={12} sm={6} md={4} lg={3}>
-            <Card
-              className="h-100 d-flex justify-content-center align-items-center"
-              style={{
-                border: "2px dashed gray",
-                backgroundColor: "#2c2c2c",
-                color: "white",
-              }}
-            >
-              <Card.Body>
-                <Button
-                  variant="success"
-                  onClick={handleCreateProduct}
-                  style={{ width: "100%" }}
-                >
-                  Registrar Produto
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        )}
         {products.map((product) => (
           <Col xs={12} sm={6} md={4} lg={2} key={product.Id}>
             <ProductCard
@@ -69,6 +50,31 @@ const Store = () => {
           </Col>
         ))}
       </Row>
+
+      <div style={{ display: "flex", alignItems: "self", justifyContent: "center"}}>
+        {user?.Admin && (
+            <Col xs={12} sm={6} md={4} lg={2}>
+              <Card
+                className="h-100 d-flex justify-content-center align-items-center"
+                style={{
+                  border: "2px solid #000",
+                  backgroundColor: "#2c2c2c",
+                  color: "white",
+                }}
+              >
+                <Card.Body>
+                  <Button
+                    variant="success"
+                    onClick={handleCreateProduct}
+                    style={{ width: "100%" }}
+                  >
+                    Registrar Produto
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+      </div>
     </Container>
   );
 };
@@ -81,7 +87,16 @@ const styles = {
     textAlign: "center",
     webkitTextStrokeWidth: "2px",
     webkitTextStrokeColor: "#000",
-  }
+  },
+  scrollContainer: {
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+    paddingBottom: "1rem",
+},
+error: {
+    fontSize: 24,
+    color: "red"
+}
 };
 
 export default Store;

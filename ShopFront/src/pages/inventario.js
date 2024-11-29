@@ -51,19 +51,21 @@ const Inventario = () => {
                 Inventário
             </h2>
             
-            <Row className="g-6">
-                {inventario?.map((item) => (
-                    <Col xs={12} sm={6} md={4} lg={2} key={item.Id}>
-                        <ProductCard
-                            product={item}
-                            isAdmin={user?.Admin}
-                            isInventario={true}
-                        />
-                    </Col>
-                ))}
-            </Row>
+            <div style={styles.scrollContainer} className="d-flex">
+                <Row className="g-6 scrollContainer">
+                    {inventario?.map((item) => (
+                        <Col xs={12} sm={6} md={4} lg={3} key={item.Id}>
+                            <ProductCard
+                                product={item}
+                                isAdmin={user?.Admin}
+                                isInventario={true}
+                            />
+                        </Col>
+                    ))}
+                </Row>
+            </div>
 
-            {error ? <h3 style={{ fontSize: 24, color: "red" }}>{error}</h3> : ""}
+            {error ? <h3 style={styles.error}>{error}</h3> : ""}
         </Container>
     )
 }
@@ -76,6 +78,16 @@ const styles = {
       textAlign: "center",
       webkitTextStrokeWidth: "2px",
       webkitTextStrokeColor: "#000",
+    },
+    scrollContainer: {
+        display: "flex",
+        overflowX: "auto",
+        gap: "1rem",
+        padding: "1rem",
+    },
+    error: {
+        fontSize: 24,
+        color: "red"
     }
 };
 
