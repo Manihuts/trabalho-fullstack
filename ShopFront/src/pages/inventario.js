@@ -7,6 +7,7 @@ import { ProdutoService } from "../services/produtoService.js";
 
 const Inventario = () => {
     const [inventario, setInventario] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const [error, setError] = useState("");
     const { user, authToken } = useAuth();
 
@@ -41,9 +42,14 @@ const Inventario = () => {
         }
     };
 
+    const atualizaPai = () => {
+        setRefresh(true);
+    };
+
     useEffect(() => {
         fetchInventario();
-    },[]);
+        setRefresh(false);
+    },[refresh]);
 
     return (
         <Container>
@@ -59,6 +65,7 @@ const Inventario = () => {
                                 product={item}
                                 isAdmin={user?.Admin}
                                 isInventario={true}
+                                atualizaPai={atualizaPai}
                             />
                         </Col>
                     ))}

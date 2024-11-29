@@ -3,7 +3,7 @@ import { Card, Button } from "react-bootstrap";
 import { useAuth } from "../context/authContext";
 import { OperacoesService } from "../services/operacoesServices";
 
-const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
+const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario, atualizaPai }) => {
   const { authToken, user } = useAuth();  // Acessa diretamente o authToken (string) e user (objeto)
 
   const handleCompra = async () => {
@@ -21,6 +21,9 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
     try {
       await OperacoesService.comprarProduto(compraDto, authToken);
       alert("Compra realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai();
+      }
     } catch (error) {
       alert("Erro ao realizar compra: " + (error.response?.data || error.message));
     }
@@ -41,6 +44,9 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
     try {
       await OperacoesService.venderProduto(vendaDto, authToken);
       alert("Venda realizada com sucesso!");
+      if (atualizaPai) {
+        atualizaPai();
+      }
     } catch (error) {
       alert("Erro ao realizar venda: " + (error.response?.data || error.message));
     }

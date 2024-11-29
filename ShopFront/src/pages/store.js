@@ -7,22 +7,23 @@ import { useNavigate } from "react-router-dom";
 
 const Store = () => {
   const [products, setProducts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const fetchProducts = async () => {
+    try {
+      const productsData = await ProdutoService.getAll();
+      setProducts(productsData);
+    } catch (error) {
+      console.error("Erro ao buscar produtos:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      console.log(user);
-      
-      try {
-        const productsData = await ProdutoService.getAll();
-        setProducts(productsData);
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-      }
-    };
     fetchProducts();
-  }, []);
+    setRefresh(false);
+  },[refresh]);
 
   const handleCreateProduct = () => {
     navigate("/edit-product");
@@ -30,6 +31,10 @@ const Store = () => {
 
   const handleEditProduct = (productId) => {
     navigate(`/edit-product/${productId}`);
+  };
+
+  const atualizaPai = () => {
+    setRefresh(true);
   };
 
   return (
@@ -46,6 +51,7 @@ const Store = () => {
               isAdmin={user?.Admin}
               handleEdit={() => handleEditProduct(product.Id)}
               isInventario={false}
+              atualizaPai={atualizaPai}
             />
           </Col>
         ))}
