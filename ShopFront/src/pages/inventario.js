@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import ProductCard from "../components/productCard.js";
 import { useAuth } from "../context/authContext.js";
 import { InventarioServices } from "../services/inventarioServices.js";
@@ -47,7 +47,7 @@ const Inventario = () => {
 
     return (
         <Container>
-            <h2 className="my-4" style={{ fontWeight: "bold", color: "#ffc107", textAlign: "center" }}>
+            <h2 className="my-4" style={styles.title}>
                 Inventário
             </h2>
             
@@ -67,5 +67,16 @@ const Inventario = () => {
         </Container>
     )
 }
+
+const styles = {
+    title: {
+      fontWeight: "bold",
+      fontSize: 50,
+      color: "#ede43b",
+      textAlign: "center",
+      webkitTextStrokeWidth: "2px",
+      webkitTextStrokeColor: "#000",
+    }
+};
 
 export default Inventario;

@@ -89,7 +89,7 @@ const ProductCard = ({ product, isAdmin, handleEdit = null, isInventario }) => {
                 Editar Produto
               </Button>
             )}
-            {!isInventario && (
+            {!isInventario && !isAdmin && (
               <Button variant="success" onClick={handleCompra} className="w-100 mt-2 btn-block" >
                 Comprar
               </Button>

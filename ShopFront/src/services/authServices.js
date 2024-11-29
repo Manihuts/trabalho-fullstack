@@ -27,7 +27,6 @@ export const AuthServices = {
     try {
       const { senha, ...usuarioDTO } = data;
 
-
       const queryParams = new URLSearchParams({ senha }).toString();
 
       const response = await axios.post(
@@ -36,7 +35,6 @@ export const AuthServices = {
       );
 
       console.log("Usuário registrado:", response.data);
-
 
       const loginResponse = await this.login({
         Email: data.email,

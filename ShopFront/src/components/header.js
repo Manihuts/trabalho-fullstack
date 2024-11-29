@@ -72,7 +72,7 @@ const CustomNavbar = () => {
               </Button>
             )}
 
-            {authToken && user && (
+            {authToken && user && user.isAdmin == "0" &&(
               <Button
                 variant="link"
                 onClick={() => navigate("/inventario")}

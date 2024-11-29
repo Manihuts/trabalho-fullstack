@@ -11,6 +11,7 @@ const Register = () => {
     email: "",
     senha: "",
     confirmarSenha: "",
+    isadmin: false
   });
   const [error, setError] = useState("");
   const userInputHandler = createInputHandler(setUser, user);
@@ -25,11 +26,10 @@ const Register = () => {
 
       const { confirmarSenha, ...userData } = user;
 
-
       const payload = {
         ...userData,
         id: "", 
-        admin: false, 
+        admin: user.isadmin, 
         saldo: 1000, 
         carrinho: [], 
       };
@@ -37,7 +37,7 @@ const Register = () => {
       await AuthServices.register(payload);
 
       alert("Registro bem-sucedido!");
-      //navigate("/login");
+      navigate("/login");
     } catch (error) {
       console.error("Erro ao registrar usuário:", error.response?.data || error.message);
       setErrorMessage("Falha ao registrar. Verifique os dados e tente novamente.");
@@ -105,6 +105,14 @@ const Register = () => {
                       name="confirmarSenha"
                       value={user.confirmarSenha}
                       onChange={userInputHandler}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Check
+                      name="isadmin"
+                      label="Admin?"
+                      checked={user.isadmin}
+                      onChange={(e) => setUser({ ...user, isadmin: e.target.checked })}
                     />
                   </Form.Group>
                   <Form.Group className="mb-3 d-flex justify-content-center align-items-center">
